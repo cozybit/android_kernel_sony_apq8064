@@ -884,7 +884,7 @@ static int __init ksb_init(void)
 		init_usb_anchor(&ksb->submitted);
 
 		ksb->dbg_idx = 0;
-		ksb->dbg_lock = __RW_LOCK_UNLOCKED(lck);
+		rwlock_init(&ksb->dbg_lock);
 
 		if (!IS_ERR(dbg_dir))
 			debugfs_create_file(ksb->name, S_IRUGO, dbg_dir,
