@@ -269,10 +269,8 @@ static int panel_id_reg_check(struct msm_fb_data_type *mfd,
 
 	dev_dbg(dev, "%s\n", __func__);
 
-	mutex_lock(&mfd->dma->ov_mutex);
 	ret = panel_execute_cmd(mfd, dsi_data, panel->pctrl->read_id,
 								panel->id_num);
-	mutex_unlock(&mfd->dma->ov_mutex);
 	if (ret) {
 		dev_err(dev, "%s: read id failed\n", __func__);
 		goto exit;
@@ -613,6 +611,7 @@ static struct msm_panel_info *detect_panel(struct msm_fb_data_type *mfd)
 		return NULL;
 	}
 
+	mutex_lock(&mfd->dma->ov_mutex);
 	mutex_lock(&dsi_data->lock);
 	mipi_dsi_op_mode_config(DSI_CMD_MODE);
 	for (i = 0; dsi_data->panels[i]; i++) {
@@ -624,6 +623,7 @@ static struct msm_panel_info *detect_panel(struct msm_fb_data_type *mfd)
 			&& dsi_data->panels[i]->id_num == 1))
 			break;
 	}
+	mutex_unlock(&mfd->dma->ov_mutex);
 
 	if (dsi_data->panels[i]) {
 		dsi_data->panel = dsi_data->panels[i];
