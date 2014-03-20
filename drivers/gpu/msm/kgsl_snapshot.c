@@ -189,10 +189,13 @@ static int snapshot_os(struct kgsl_device *device,
 	pid = header->pid = kgsl_mmu_get_ptname_from_ptbase(&device->mmu,
 								header->ptbase);
 
+	rcu_read_lock();
 	task = find_task_by_vpid(pid);
 
 	if (task)
 		get_task_comm(header->comm, task);
+
+	rcu_read_unlock();
 
 	header->ctxtcount = ctxtcount;
 
